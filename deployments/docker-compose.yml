@@ -1,0 +1,34 @@
+version: '3'
+services:
+  ingress-test:
+    image: 'ingress-test:latest'
+    build:
+      context: ..
+      dockerfile: ./deployments/Dockerfile
+    restart: always
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=user
+      - RABBITMQ_PASS=bitnami
+      - TEST_API_PORT=8000
+
+    ports:
+      - '8000:8000'
+
+  rabbitmq:
+    image: 'bitnami/rabbitmq:3.7'
+    ports:
+      - '4369:4369'
+      - '5672:5672'
+      - '25672:25672'
+      - '15672:15672'
+    volumes:
+      - 'rabbitmq_data:/bitnami'
+
+volumes:
+  rabbitmq_data:
+    driver: local
